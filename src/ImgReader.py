@@ -18,17 +18,17 @@ class ImgReader:
         self.__img_mask = color.rgb2gray(plt.imread(images_folder_path + "mask/" + img_name + "_mask.tif"))
         self.__img_golden_standard = color.rgb2gray(plt.imread(images_folder_path + "manual1/" + img_name + ".tif"))
 
-    def get_img(self):
+    def get_img(self) -> np.ndarray:
         if self.__img.size == 0:
             raise Exception("No read image in memory")
         return np.copy(self.__img)
 
-    def get_mask(self):
+    def get_mask(self) -> np.ndarray:
         if self.__img_mask.size == 0:
             raise Exception("No read image in memory")
         return np.copy(self.__img_mask)
 
-    def get_standard(self):
+    def get_standard(self) -> np.ndarray:
         if self.__img_golden_standard.size == 0:
             raise Exception("No read image in memory")
         return np.copy(self.__img_golden_standard)
