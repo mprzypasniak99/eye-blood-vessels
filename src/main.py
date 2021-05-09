@@ -1,6 +1,9 @@
 from ImgProcessor import ImgProcessor
 from ImgReader import ImgReader
-from ImgPatchExtractor import  ImgPatchExtractor
+from ImgPatchExtractor import ImgPatchExtractor
+from ImgMachineLearning import ImgMachineLearning
+import skimage.io as io
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     reader = ImgReader()
@@ -11,9 +14,17 @@ if __name__ == '__main__':
     # proc.show_img()
     # proc.show_metrics()
 
-    patch = ImgPatchExtractor(reader)
-    patch.extract_patches()
+    # patch = ImgPatchExtractor(reader)
+    # patch.extract_patches()
+    #
+    # train, test = patch.get_train_test_sets()
+    #
+    # print(train, test)
 
-    train, test = patch.get_train_test_sets()
+    machine = ImgMachineLearning(reader)
 
-    print(train, test)
+    machine.train()
+
+    img = machine.classify("02_dr", "../img/")
+    io.imshow(img)
+    plt.show()
