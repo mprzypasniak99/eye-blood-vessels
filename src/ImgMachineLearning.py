@@ -12,6 +12,7 @@ class ImgMachineLearning:
         self.__classifier = tree.DecisionTreeClassifier(random_state=0)
         self.__reader = reader
         self.__patch = ImgPatchExtractor(reader)
+        self.__reader.add_observer(self.__patch)
 
     @staticmethod
     def __get_files_list():
@@ -42,7 +43,10 @@ class ImgMachineLearning:
     def classify(self, filename: str, path: str):
         self.__reader.load_image(filename, path)
 
-        new_img = np.zeros(self.__reader.get_img().shape)
+        return self.classify()
+
+    def classify(self):
+        new_img = np.zeros(self.__reader.get_img().shape[0:2], dtype=int)
 
         for i in [1, 2, 3, 4]:
             coords, x_args = self.__patch.get_quarter_patches(i)

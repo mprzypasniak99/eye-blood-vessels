@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.feature_extraction import image
+from ImgObserver import ImgObserver
 import skimage.measure as measure
 import skimage.filters as filters
 import skimage.exposure as exposure
@@ -7,11 +8,13 @@ from ImgReader import ImgReader
 import random as r
 
 
-class ImgPatchExtractor:
+class ImgPatchExtractor(ImgObserver):
     def __init__(self, reader=ImgReader):
         self.__reader = reader
-        self.__indices = np.zeros((*self.__reader.get_img().shape[0:2], 2), dtype=int)
-        self.__create_indices_matrix()
+        try:
+            self.changed_img()
+        except Exception:
+            self.__indices = []
         self.__patches = np.array([])
 
     def __create_indices_matrix(self):
@@ -22,7 +25,7 @@ class ImgPatchExtractor:
 
     def set_reader(self, reader: ImgReader):
         self.__reader = reader
-        self.__indices = np.indices(self.__reader.get_img().shape)  # __indices should probably be initialized with np.zeroes not np.indices, check this
+        self.__indices = np.zeros((*self.__reader.get_img().shape[0:2], 2), dtype=int)  
 
     def extract_patches(self):
         self.__patches = image.extract_patches_2d(self.__indices, (5, 5), max_patches=20000)
@@ -80,3 +83,7 @@ class ImgPatchExtractor:
 
         parameters = np.array(parameters)
         return patches[:, 2, 2], parameters
+
+    def changed_img(self):
+        self.__indices = np.zeros((*self.__reader.get_img().shape[0:2], 2), dtype=int)
+        self.__create_indices_matrix()
