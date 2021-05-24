@@ -96,6 +96,15 @@ class ImgPatchExtractor(ImgObserver):
         patches = image.extract_patches_2d(self.__indices[start:end], (5, 5))
 
         img = self.__reader.get_img()[:, :, 1]
+        img_mask = self.__reader.get_mask()
+        tmp = np.mean(img)
+	for y in range(img.shape[0]):
+    		for x in range(img.shape[1]):
+		if img_mask[y, x] == 0:
+			img[y, x]= tmp
+	img = exposure.equalize_adapthist(img)
+	img = exposure.adjust_gamma(img, 0.7, 0.7)
+	img = exposure.rescale_intensity(img)
 
         for i in patches:
             parameters.append(img[i[0, 0, 0]:i[4, 4, 0] + 1, i[0, 0, 1]:i[4, 4, 1] + 1].flatten())
