@@ -51,7 +51,7 @@ class ImgMachineLearning:
         for i in [1, 2, 3, 4]:
             coords, x_args = self.__patch.get_quarter_patches(i)
 
-            predictions = self.__classifier.predict(x_args)
+            predictions = self.__classifier.predict(x_args.reshape(1, -1))
 
             for j in range(len(coords)):
                 new_img[coords[j][0], coords[j][1]] = predictions[j]
