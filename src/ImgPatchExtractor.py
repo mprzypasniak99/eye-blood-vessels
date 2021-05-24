@@ -47,13 +47,32 @@ class ImgPatchExtractor(ImgObserver):
         x_set = []
         expert_mask = self.__reader.get_standard()
         img = self.__reader.get_img()[:, :, 1]
+        img_mask = self.__reader.get_mask()
+	
+	tmp = np.mean(img)
+	for y in range(img.shape[0]):
+    		for x in range(img.shape[1]):
+		if img_mask[y, x] == 0:
+			img[y, x]= tmp
+	img = exposure.equalize_adapthist(img)
+	img = exposure.adjust_gamma(img, 0.7, 0.7)
+	img = exposure.rescale_intensity(img)
+	
+	points = []
+	while len(points) < 2250000:
+		x = r.randint(2, 3501)
+		y = r.randint(2, 2333)
+		if img_mask[y, x] != 0:
+			points.append((y, x))
 
-        for i in range(2000000):
-            x = r.randint(2, 3501)
-            y = r.randint(2, 2333)
-            x_set.append(img[y-2:y+3, x-2:x+3].flatten())
-            y_set.append(expert_mask[y, x])
-
+	for y, x in points:
+		tmp = []
+		for i in range(y-2,y+3):
+			for j in range(x-2,x+3):
+				tmp.append(img[i, j])
+		x_set.append(tmp)
+		y_set.append(expert_mask[y, x])
+            
         x_set = np.array(x_set)
         y_set = np.array(y_set)
 
